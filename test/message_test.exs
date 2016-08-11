@@ -8,16 +8,35 @@ defmodule MessageTest do
   	assert message.verb == "GET"
   end
 
-  test "Can parse verb from POST request" do
-  	rawmessage = """
-  	POST / HTTP/1.1
-  	Host: localhost
-  	Test: value
+  setup do
+    message = """
+    POST / HTTP/1.1
+    Host: localhost
+    Test: value
 
-  	test
-  	"""
-  	message = rawmessage |> Message.parse
+    test
+    """
+    |> Message.parse
+    [post: message]
+  end
+
+  test "Can parse verb from POST request", context do
+  	message = context[:post]
   	assert message.verb == "POST"
-  	assert message.headers |> Enum.count == 2
+  end
+
+  test "Headers contains two items", context do
+    message = context[:post]
+    assert message.headers |> Enum.count == 2
+  end
+
+  test "'Test' header contains 'value'", context do
+    message = context[:post]
+    assert message.headers[:Test] == "value"
+  end
+
+  test "'Host' header contains 'localhost'", context do
+    message = context[:post]
+    assert message.headers[:Host] == "localhost"
   end
 end

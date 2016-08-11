@@ -14,8 +14,16 @@ defmodule ListenerTest do
     
     {:ok, socket} = :gen_tcp.connect('localhost', 8000, [:binary, active: false])
     :gen_tcp.send(socket, "GET / HTTP/1.1\nHost: localhost\n\n")
+    1000 |> :timer.sleep
+    case :gen_tcp.recv(socket, 0) do
+      {:ok, data} ->
+          IO.puts data
+          assert data == "Hello world!"
+        {:error, reason} ->
+          IO.puts "Client faulted/closed: #{reason}"
+    end
     socket |> :gen_tcp.close
-    5000 |> :timer.sleep
+    1000 |> :timer.sleep
   end
 
   #test "Run a little hello world type thing ..." do

@@ -36,6 +36,7 @@ defmodule Http.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:gen_stage, "~> 0.4"}]
+    [{:gen_stage, "~> 0.4"},
+    {:mix_test_watch, "~> 0.2", only: :dev}]
   end
 end

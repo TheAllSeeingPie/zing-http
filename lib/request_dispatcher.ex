@@ -8,17 +8,16 @@ defmodule RequestDispatcher do
 	end
 
 	def handle_events(events, _from, number) do
-		IO.puts "RequestDispatcher handle_events"
-		events = Enum.map(events, fn client -> client |> process_client end)
-		{:noreply, events, number}
+		{:noreply, Enum.map(events, fn socket -> socket |> process_socket end), number}
 	end
 
-	def process_client(client) do	
-		case :gen_tcp.recv(client, 0) do
+	def process_socket(socket) do	
+		case :gen_tcp.recv socket, 0 do
 			{:ok, data} ->
-		   		data |> Message.parse
+		   		{:ok, data |> Message.parse, socket}
 		   	{:error, reason} ->
 		   		IO.puts "Client faulted/closed: #{reason}"
+		   		{:error, reason}
 		end
 	end
 end

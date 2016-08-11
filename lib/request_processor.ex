@@ -8,12 +8,15 @@ defmodule RequestProcessor do
 	end
 
 	def handle_events(events, _from, number) do
-		IO.puts "RequestProcessor handle_events"
 		Enum.each events, fn message -> message |> consume_message end
 		{:noreply, [], number}
 	end
 
 	def consume_message(message) do
-		IO.puts message.path
+		case message do
+			{:ok, message, socket} ->
+				IO.puts "Message received for #{message.path}"
+				:gen_tcp.send socket, "Hello world!"
+		end
 	end
 end
